@@ -11,3 +11,6 @@ window.firebaseConfig = {
 };
 // Keep the existing local server available. Use ?firebase=1 to test Firebase locally.
 window.useFirebase = !(['localhost', '127.0.0.1'].includes(location.hostname) && location.port === '3000') || new URLSearchParams(location.search).get('firebase') === '1';
+
+// Public login alias; passwords are managed only by Firebase Authentication.
+window.firebaseAdminLogin = { username: 'ahmadshaheen', email: 'l36648446@gmail.com' };

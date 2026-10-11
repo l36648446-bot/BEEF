@@ -88,7 +88,10 @@
   async function handle(route, options = {}) {
     const method = options.method || 'GET', data = options.body ? JSON.parse(options.body) : {};
     if (route === '/api/admin/login') {
-      const result = await authenticate('signInWithPassword', { email: data.email, password: data.password });
+      const alias = window.firebaseAdminLogin;
+      const entered = String(data.email || '').trim();
+      const email = alias && entered.toLowerCase() === alias.username.toLowerCase() ? alias.email : entered;
+      const result = await authenticate('signInWithPassword', { email, password: data.password });
       remember('admin', authRecord(result));
       try { if (await database(`admins/${result.localId}`, 'admin') !== true) throw failure('الحساب مسجّل لكن ليس أدمن. أضف UID الخاص به ضمن admins في قاعدة البيانات.', 403); }
       catch (e) { remember('admin', null); throw e; }
