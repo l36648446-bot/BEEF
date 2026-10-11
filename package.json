@@ -1,0 +1,10 @@
+{
+  "name": "aljoud-meat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.cjs",
+    "build": "node build.cjs",
+    "test": "node verify.cjs && node verify-server.cjs && node verify-firebase.cjs"
+  }
+}

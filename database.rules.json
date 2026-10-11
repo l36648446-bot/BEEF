@@ -1,0 +1,91 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid"
+      }
+    },
+    "orders": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$id": {
+        ".read": "auth != null && (data.child('ownerUid').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && newData.exists() && ((!data.exists() && newData.child('ownerUid').val() === auth.uid && newData.child('status').val() === 'draft') || (data.child('ownerUid').val() === auth.uid && data.child('status').val() === 'draft' && (newData.child('status').val() === 'draft' || newData.child('status').val() === 'pending')) || (data.child('ownerUid').val() === auth.uid && data.child('status').val() === 'approved' && newData.child('status').val() === 'completed') || (root.child('admins').child(auth.uid).val() === true && data.child('status').val() === 'pending' && newData.child('status').val() === 'approved'))",
+        ".validate": "newData.hasChildren(['id','ownerUid','status','createdAt','customer','deliveryCustomer','address','governorate','location','notes']) && (newData.child('status').val() === 'draft' || newData.hasChildren(['orderNumber','month','year','postalCode','items','itemCount','detailsSubmittedAt'])) && (newData.child('status').val() !== 'completed' || newData.hasChild('phone'))",
+        "id": {
+          ".validate": "newData.isString() && newData.val() === $id"
+        },
+        "ownerUid": {
+          ".validate": "newData.isString() && ((!data.exists() && newData.val() === auth.uid) || newData.val() === data.val())"
+        },
+        "status": {
+          ".validate": "newData.val() === 'draft' || newData.val() === 'pending' || newData.val() === 'approved' || newData.val() === 'completed'"
+        },
+        "createdAt": {
+          ".validate": "newData.isString() && newData.val().length <= 30 && (!data.exists() || newData.val() === data.val())"
+        },
+        "customer": {
+          ".validate": "(newData.isString() && newData.val().length <= 100 && newData.val().length > 0) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "deliveryCustomer": {
+          ".validate": "(newData.isString() && newData.val().length <= 100 && newData.val().length > 0) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "address": {
+          ".validate": "(newData.isString() && newData.val().length <= 500 && newData.val().length > 0) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "governorate": {
+          ".validate": "(newData.isString() && newData.val().length <= 100 && newData.val().length > 0) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "location": {
+          ".validate": "(newData.isString() && newData.val().length <= 500) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "notes": {
+          ".validate": "(newData.isString() && newData.val().length <= 500) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "orderNumber": {
+          ".validate": "(newData.isString() && newData.val().matches(/^[0-9]{1,40}$/)) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "month": {
+          ".validate": "(newData.isNumber() && newData.val() >= 1 && newData.val() <= 12 && newData.val() % 1 === 0) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "year": {
+          ".validate": "(newData.isNumber() && newData.val() >= 1900 && newData.val() <= 9999 && newData.val() % 1 === 0) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "postalCode": {
+          ".validate": "(newData.isString() && newData.val().matches(/^[0-9]{5}$/)) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "detailsSubmittedAt": {
+          ".validate": "(newData.isString() && newData.val().length <= 30) && (!data.exists() || data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        },
+        "phone": {
+          ".validate": "newData.isString() && newData.val().matches(/^[+]965[24569][0-9]{7}$/) && newData.parent().child('status').val() === 'completed' && (!data.exists() || newData.val() === data.val())"
+        },
+        "items": {
+          ".validate": "newData.hasChildren() && (newData.parent().child('itemCount').val() > 0 ? newData.hasChild('0') : !newData.hasChild('0')) && (newData.parent().child('itemCount').val() > 1 ? newData.hasChild('1') : !newData.hasChild('1')) && (newData.parent().child('itemCount').val() > 2 ? newData.hasChild('2') : !newData.hasChild('2')) && (newData.parent().child('itemCount').val() > 3 ? newData.hasChild('3') : !newData.hasChild('3')) && (newData.parent().child('itemCount').val() > 4 ? newData.hasChild('4') : !newData.hasChild('4')) && (newData.parent().child('itemCount').val() > 5 ? newData.hasChild('5') : !newData.hasChild('5')) && (newData.parent().child('itemCount').val() > 6 ? newData.hasChild('6') : !newData.hasChild('6')) && (newData.parent().child('itemCount').val() > 7 ? newData.hasChild('7') : !newData.hasChild('7')) && (newData.parent().child('itemCount').val() > 8 ? newData.hasChild('8') : !newData.hasChild('8')) && (newData.parent().child('itemCount').val() > 9 ? newData.hasChild('9') : !newData.hasChild('9')) && (newData.parent().child('itemCount').val() > 10 ? newData.hasChild('10') : !newData.hasChild('10')) && (newData.parent().child('itemCount').val() > 11 ? newData.hasChild('11') : !newData.hasChild('11')) && (newData.parent().child('itemCount').val() > 12 ? newData.hasChild('12') : !newData.hasChild('12')) && (newData.parent().child('itemCount').val() > 13 ? newData.hasChild('13') : !newData.hasChild('13')) && (newData.parent().child('itemCount').val() > 14 ? newData.hasChild('14') : !newData.hasChild('14')) && (newData.parent().child('itemCount').val() > 15 ? newData.hasChild('15') : !newData.hasChild('15')) && (newData.parent().child('itemCount').val() > 16 ? newData.hasChild('16') : !newData.hasChild('16')) && (newData.parent().child('itemCount').val() > 17 ? newData.hasChild('17') : !newData.hasChild('17')) && (newData.parent().child('itemCount').val() > 18 ? newData.hasChild('18') : !newData.hasChild('18')) && (newData.parent().child('itemCount').val() > 19 ? newData.hasChild('19') : !newData.hasChild('19')) && (newData.parent().child('itemCount').val() > 20 ? newData.hasChild('20') : !newData.hasChild('20')) && (newData.parent().child('itemCount').val() > 21 ? newData.hasChild('21') : !newData.hasChild('21')) && (newData.parent().child('itemCount').val() > 22 ? newData.hasChild('22') : !newData.hasChild('22')) && (newData.parent().child('itemCount').val() > 23 ? newData.hasChild('23') : !newData.hasChild('23')) && (newData.parent().child('itemCount').val() > 24 ? newData.hasChild('24') : !newData.hasChild('24')) && (newData.parent().child('itemCount').val() > 25 ? newData.hasChild('25') : !newData.hasChild('25')) && (newData.parent().child('itemCount').val() > 26 ? newData.hasChild('26') : !newData.hasChild('26')) && (newData.parent().child('itemCount').val() > 27 ? newData.hasChild('27') : !newData.hasChild('27')) && (newData.parent().child('itemCount').val() > 28 ? newData.hasChild('28') : !newData.hasChild('28')) && (newData.parent().child('itemCount').val() > 29 ? newData.hasChild('29') : !newData.hasChild('29')) && (newData.parent().child('itemCount').val() > 30 ? newData.hasChild('30') : !newData.hasChild('30')) && (newData.parent().child('itemCount').val() > 31 ? newData.hasChild('31') : !newData.hasChild('31')) && (newData.parent().child('itemCount').val() > 32 ? newData.hasChild('32') : !newData.hasChild('32')) && (newData.parent().child('itemCount').val() > 33 ? newData.hasChild('33') : !newData.hasChild('33')) && (newData.parent().child('itemCount').val() > 34 ? newData.hasChild('34') : !newData.hasChild('34')) && (newData.parent().child('itemCount').val() > 35 ? newData.hasChild('35') : !newData.hasChild('35')) && (newData.parent().child('itemCount').val() > 36 ? newData.hasChild('36') : !newData.hasChild('36')) && (newData.parent().child('itemCount').val() > 37 ? newData.hasChild('37') : !newData.hasChild('37')) && (newData.parent().child('itemCount').val() > 38 ? newData.hasChild('38') : !newData.hasChild('38')) && (newData.parent().child('itemCount').val() > 39 ? newData.hasChild('39') : !newData.hasChild('39')) && (newData.parent().child('itemCount').val() > 40 ? newData.hasChild('40') : !newData.hasChild('40')) && (newData.parent().child('itemCount').val() > 41 ? newData.hasChild('41') : !newData.hasChild('41')) && (newData.parent().child('itemCount').val() > 42 ? newData.hasChild('42') : !newData.hasChild('42')) && (newData.parent().child('itemCount').val() > 43 ? newData.hasChild('43') : !newData.hasChild('43')) && (newData.parent().child('itemCount').val() > 44 ? newData.hasChild('44') : !newData.hasChild('44')) && (newData.parent().child('itemCount').val() > 45 ? newData.hasChild('45') : !newData.hasChild('45')) && (newData.parent().child('itemCount').val() > 46 ? newData.hasChild('46') : !newData.hasChild('46')) && (newData.parent().child('itemCount').val() > 47 ? newData.hasChild('47') : !newData.hasChild('47')) && (newData.parent().child('itemCount').val() > 48 ? newData.hasChild('48') : !newData.hasChild('48')) && (newData.parent().child('itemCount').val() > 49 ? newData.hasChild('49') : !newData.hasChild('49')) && (newData.parent().child('itemCount').val() > 50 ? newData.hasChild('50') : !newData.hasChild('50')) && (newData.parent().child('itemCount').val() > 51 ? newData.hasChild('51') : !newData.hasChild('51')) && (newData.parent().child('itemCount').val() > 52 ? newData.hasChild('52') : !newData.hasChild('52')) && (newData.parent().child('itemCount').val() > 53 ? newData.hasChild('53') : !newData.hasChild('53')) && (newData.parent().child('itemCount').val() > 54 ? newData.hasChild('54') : !newData.hasChild('54')) && (newData.parent().child('itemCount').val() > 55 ? newData.hasChild('55') : !newData.hasChild('55')) && (newData.parent().child('itemCount').val() > 56 ? newData.hasChild('56') : !newData.hasChild('56')) && (newData.parent().child('itemCount').val() > 57 ? newData.hasChild('57') : !newData.hasChild('57')) && (newData.parent().child('itemCount').val() > 58 ? newData.hasChild('58') : !newData.hasChild('58')) && (newData.parent().child('itemCount').val() > 59 ? newData.hasChild('59') : !newData.hasChild('59')) && (newData.parent().child('itemCount').val() > 60 ? newData.hasChild('60') : !newData.hasChild('60')) && (newData.parent().child('itemCount').val() > 61 ? newData.hasChild('61') : !newData.hasChild('61')) && (newData.parent().child('itemCount').val() > 62 ? newData.hasChild('62') : !newData.hasChild('62')) && (newData.parent().child('itemCount').val() > 63 ? newData.hasChild('63') : !newData.hasChild('63')) && (newData.parent().child('itemCount').val() > 64 ? newData.hasChild('64') : !newData.hasChild('64')) && (newData.parent().child('itemCount').val() > 65 ? newData.hasChild('65') : !newData.hasChild('65')) && (newData.parent().child('itemCount').val() > 66 ? newData.hasChild('66') : !newData.hasChild('66')) && (newData.parent().child('itemCount').val() > 67 ? newData.hasChild('67') : !newData.hasChild('67')) && (newData.parent().child('itemCount').val() > 68 ? newData.hasChild('68') : !newData.hasChild('68')) && (newData.parent().child('itemCount').val() > 69 ? newData.hasChild('69') : !newData.hasChild('69')) && (newData.parent().child('itemCount').val() > 70 ? newData.hasChild('70') : !newData.hasChild('70')) && (newData.parent().child('itemCount').val() > 71 ? newData.hasChild('71') : !newData.hasChild('71')) && (newData.parent().child('itemCount').val() > 72 ? newData.hasChild('72') : !newData.hasChild('72')) && (newData.parent().child('itemCount').val() > 73 ? newData.hasChild('73') : !newData.hasChild('73')) && (newData.parent().child('itemCount').val() > 74 ? newData.hasChild('74') : !newData.hasChild('74')) && (newData.parent().child('itemCount').val() > 75 ? newData.hasChild('75') : !newData.hasChild('75')) && (newData.parent().child('itemCount').val() > 76 ? newData.hasChild('76') : !newData.hasChild('76')) && (newData.parent().child('itemCount').val() > 77 ? newData.hasChild('77') : !newData.hasChild('77')) && (newData.parent().child('itemCount').val() > 78 ? newData.hasChild('78') : !newData.hasChild('78')) && (newData.parent().child('itemCount').val() > 79 ? newData.hasChild('79') : !newData.hasChild('79')) && (newData.parent().child('itemCount').val() > 80 ? newData.hasChild('80') : !newData.hasChild('80')) && (newData.parent().child('itemCount').val() > 81 ? newData.hasChild('81') : !newData.hasChild('81')) && (newData.parent().child('itemCount').val() > 82 ? newData.hasChild('82') : !newData.hasChild('82')) && (newData.parent().child('itemCount').val() > 83 ? newData.hasChild('83') : !newData.hasChild('83')) && (newData.parent().child('itemCount').val() > 84 ? newData.hasChild('84') : !newData.hasChild('84')) && (newData.parent().child('itemCount').val() > 85 ? newData.hasChild('85') : !newData.hasChild('85')) && (newData.parent().child('itemCount').val() > 86 ? newData.hasChild('86') : !newData.hasChild('86')) && (newData.parent().child('itemCount').val() > 87 ? newData.hasChild('87') : !newData.hasChild('87')) && (newData.parent().child('itemCount').val() > 88 ? newData.hasChild('88') : !newData.hasChild('88')) && (newData.parent().child('itemCount').val() > 89 ? newData.hasChild('89') : !newData.hasChild('89')) && (newData.parent().child('itemCount').val() > 90 ? newData.hasChild('90') : !newData.hasChild('90')) && (newData.parent().child('itemCount').val() > 91 ? newData.hasChild('91') : !newData.hasChild('91')) && (newData.parent().child('itemCount').val() > 92 ? newData.hasChild('92') : !newData.hasChild('92')) && (newData.parent().child('itemCount').val() > 93 ? newData.hasChild('93') : !newData.hasChild('93')) && (newData.parent().child('itemCount').val() > 94 ? newData.hasChild('94') : !newData.hasChild('94')) && (newData.parent().child('itemCount').val() > 95 ? newData.hasChild('95') : !newData.hasChild('95')) && (newData.parent().child('itemCount').val() > 96 ? newData.hasChild('96') : !newData.hasChild('96')) && (newData.parent().child('itemCount').val() > 97 ? newData.hasChild('97') : !newData.hasChild('97')) && (newData.parent().child('itemCount').val() > 98 ? newData.hasChild('98') : !newData.hasChild('98')) && (newData.parent().child('itemCount').val() > 99 ? newData.hasChild('99') : !newData.hasChild('99'))",
+          "$item": {
+            ".validate": "$item.matches(/^(0|[1-9][0-9]?)$/) && newData.hasChildren(['productIndex','variantIndex','quantity'])",
+            "productIndex": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9 && newData.val() % 1 === 0 && (data.parent().parent().parent().child('status').val() === 'draft' || newData.val() === data.val())"
+            },
+            "variantIndex": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 99 && newData.val() % 1 === 0 && (data.parent().parent().parent().child('status').val() === 'draft' || newData.val() === data.val())"
+            },
+            "quantity": {
+              ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 99 && newData.val() % 1 === 0 && (data.parent().parent().parent().child('status').val() === 'draft' || newData.val() === data.val())"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        },
+        "itemCount": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 100 && newData.val() % 1 === 0 && (data.parent().child('status').val() === 'draft' || newData.val() === data.val())"
+        }
+      }
+    }
+  }
+}
