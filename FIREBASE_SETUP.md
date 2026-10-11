@@ -1,6 +1,6 @@
 # Firebase — gerty-b6913
 
-إعدادات تطبيق الويب موجودة في firebase-config.js. يتصل الموقع مباشرة بـ Realtime Database باستخدام Firebase Authentication وREST؛ لا يحتاج خادم Node.js بعد نشر نسخة Firebase. لم يتم نشر الموقع أو القواعد تلقائياً.
+إعدادات تطبيق الويب موجودة في firebase-config.js. يتصل الموقع مباشرة بـ Realtime Database باستخدام Firebase Authentication وREST؛ لا يحتاج خادم Node.js بعد نشر نسخة Firebase. تم نشر الموقع وقواعد قاعدة البيانات بتاريخ 11 أكتوبر 2026. المتجر: https://gerty-b6913.web.app والأدمن: https://gerty-b6913.web.app/admin.html . بقي تفعيل Authentication وإعداد حساب الأدمن لإكمال التشغيل.
 
 ## إعداد الحسابات
 
@@ -29,7 +29,7 @@ firebase deploy --only database,hosting --project gerty-b6913
 
 firebase.json ينشر مجلد dist الذي يحتوي صفحات الموقع والصور فقط، ولا يتضمن كلمات المرور المحلية أو بيانات الزبائن أو ملفات الخادم. يتم توليد dist بأمر البناء، ولا يُرفع إلى GitHub.
 
-بعد النشر افتح https://gerty-b6913.web.app وhttps://gerty-b6913.web.app/admin.html . هذه عناوين النشر المتوقعة؛ وجود ملفات الإعداد لا يعني أن النشر تم.
+بعد النشر افتح https://gerty-b6913.web.app وhttps://gerty-b6913.web.app/admin.html . تم التحقق من فتح هذه الصفحات بعد النشر.
 
 ## الاختبار المحلي
 
@@ -42,7 +42,7 @@ firebase.json ينشر مجلد dist الذي يحتوي صفحات الموقع
 
 ## GitHub
 
-ارفع ملفات المصدر والإعدادات. .gitignore يستثني data و.tools و.env ومفاتيح service account. إعدادات Firebase لتطبيق الويب ليست كلمة مرور الأدمن. لم يتم إنشاء أو رفع مستودع GitHub بعد؛ يلزم رابط المستودع والاتصال بحسابك.
+ارفع ملفات المصدر والإعدادات. .gitignore يستثني data و.tools و.env ومفاتيح service account. إعدادات Firebase لتطبيق الويب ليست كلمة مرور الأدمن. مستودع المصدر: https://github.com/l36648446-bot/BEEF . تم رفع الملفات إلى فرع main.
 
 ## التحقق
 
