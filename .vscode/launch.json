@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Update code",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/.tools/node.exe",
+      "runtimeArgs": ["--preserve-symlinks", "--preserve-symlinks-main"],
+      "program": "${workspaceFolder}/.tools/firebase-cli.cjs",
+      "args": ["deploy", "--only", "hosting", "--project", "gerty-b6913", "--non-interactive"],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "Build website for publishing",
+      "console": "integratedTerminal",
+      "noDebug": true
+    }
+  ]
+}

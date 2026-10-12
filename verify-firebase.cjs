@@ -64,7 +64,7 @@ async function fakeFetch(url, options = {}) {
   assert.equal(writeOrder(id, { ...copy(), status: 'approved' }, 'customer'), false);
   assert.equal(evaluate(rules.orders.$id['.read'], database, database, ['orders', id], 'other', { $id: id }), false);
   assert.equal((await request(`/api/orders/${id}/phone`, { phone: '50001234' })).status, 401);
-  const details = { customer: 'اسم الطلب', orderNumber: '123', month: '10', year: '2026', postalCode: '12345', items: [{ productIndex: 0, variantIndex: 0, quantity: 2 }] };
+  const details = { customer: 'اسم الطلب', orderNumber: '123', month: '10', year: '2026', postalCode: '9', items: [{ productIndex: 0, variantIndex: 0, quantity: 2 }] };
   assert.equal((await request(`/api/orders/${id}/details`, details)).status, 200);
   assert.equal(database.orders[id].deliveryCustomer, 'اسم التوصيل');
   assert.equal(database.orders[id].customer, 'اسم الطلب');
@@ -74,8 +74,8 @@ async function fakeFetch(url, options = {}) {
   const list = await request('/api/admin/orders'); assert.equal(list.data[0].total, 13000);
   assert.equal((await request(`/api/admin/orders/${id}/approve`, {})).status, 200);
   assert.equal(writeOrder(id, { ...copy(), status: 'completed', phone: '+96550001234', month: 11 }, 'customer'), false);
-  assert.equal((await request(`/api/orders/${id}/phone`, { phone: '+965 ٥٠٠٠١٢٣٤' })).status, 200);
-  assert.equal(database.orders[id].phone, '+96550001234');
+  assert.equal((await request(`/api/orders/${id}/phone`, { phone: '١٢٣' })).status, 200);
+  assert.equal(database.orders[id].phone, '123');
   assert.equal((await request('/api/admin/logout', {})).status, 200);
   assert.equal((await request('/api/admin/orders')).status, 401);
   console.log('Passed: Firebase adapter with simulated REST and rule expressions; draft, details, owner isolation, admin approval, immutable submitted data, phone, logout.');

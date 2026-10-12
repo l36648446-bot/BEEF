@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build website for publishing",
+      "type": "process",
+      "command": "${workspaceFolder}/.tools/node.exe",
+      "args": ["--preserve-symlinks", "--preserve-symlinks-main", "build.cjs"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}

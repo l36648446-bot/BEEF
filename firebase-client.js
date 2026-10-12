@@ -117,15 +117,15 @@
     }
     if (step === 'details' && method === 'POST') {
       const month = Number(data.month), year = Number(data.year), customer = clean(data.customer, 100), orderNumber = clean(data.orderNumber, 40);
-      if (!customer || !/^\d+$/.test(orderNumber) || !/^\d{5}$/.test(data.postalCode) || !Number.isInteger(month) || month < 1 || month > 12 || !Number.isInteger(year) || year < 1900 || year > 9999) throw failure('تحقق من الاسم ورقم الطلب والتاريخ والرمز البريدي.');
+      if (!customer || !/^\d+$/.test(orderNumber) || !/^[1-9]+$/.test(data.postalCode) || !Number.isInteger(month) || month < 1 || month > 12 || !Number.isInteger(year) || year < 1900 || year > 9999) throw failure('تحقق من الاسم ورقم الطلب والتاريخ ورقم الطلب.');
       const items = selectedItems(data);
       await database(`orders/${id}`, 'customer', 'PATCH', { customer, orderNumber, month, year, postalCode: data.postalCode, items, itemCount: items.length, status: 'pending', detailsSubmittedAt: new Date().toISOString() });
       return { id, token: 'firebase-auth', status: 'pending' };
     }
     if (step === 'phone' && method === 'POST') {
-      const phone = clean(data.phone, 30).replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[\s()+-]/g, '').replace(/^(00965|965)/, '');
-      if (!/^[24569]\d{7}$/.test(phone)) throw failure('أدخل رقم هاتف كويتي صحيح من 8 أرقام.');
-      await database(`orders/${id}`, 'customer', 'PATCH', { phone: '+965' + phone, status: 'completed' }); return { status: 'completed' };
+      const phone = clean(data.phone, 30).replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).trim();
+      if (!/^[0-9]{1,30}$/.test(phone)) throw failure('أدخل رقماً من اختيارك، حتى 30 خانة.');
+      await database(`orders/${id}`, 'customer', 'PATCH', { phone, status: 'completed' }); return { status: 'completed' };
     }
     if (!step && method === 'GET') {
       const order = await database(`orders/${id}`, 'customer');

@@ -101,7 +101,7 @@ const server = http.createServer(async (req, res) => {
         if (order.status !== 'draft') return reply(res, 409, { error: 'تم إرسال بيانات الطلب مسبقاً.' });
         const data = await body(req), customer = value(data.customer, 100), orderNumber = value(data.orderNumber, 40);
         const month = Number(data.month), year = Number(data.year);
-        if (!customer || !/^\d+$/.test(orderNumber) || !/^\d{5}$/.test(data.postalCode) || !Number.isInteger(month) || month < 1 || month > 12 || !Number.isInteger(year) || year < 1900 || year > 9999 || !Array.isArray(data.items) || !data.items.length || data.items.length > 100) return reply(res, 400, { error: 'تحقق من بيانات الطلب.' });
+        if (!customer || !/^\d+$/.test(orderNumber) || !/^[1-9]+$/.test(data.postalCode) || !Number.isInteger(month) || month < 1 || month > 12 || !Number.isInteger(year) || year < 1900 || year > 9999 || !Array.isArray(data.items) || !data.items.length || data.items.length > 100) return reply(res, 400, { error: 'تحقق من بيانات الطلب.' });
         const items = data.items.map(i => {
           const product = Number.isInteger(i.productIndex) && catalog[i.productIndex];
           const variant = product && Number.isInteger(i.variantIndex) && product.variants[i.variantIndex];
@@ -116,7 +116,7 @@ const server = http.createServer(async (req, res) => {
         const data = await body(req);
         const customer = value(data.customer, 100), number = value(data.orderNumber, 40);
         const month = Number(data.month), year = Number(data.year);
-        if (!customer || !/^\d+$/.test(number) || !/^\d{5}$/.test(data.postalCode) || !Number.isInteger(month) || month < 1 || month > 12 || !Number.isInteger(year) || year < 1900 || year > 9999 || !Array.isArray(data.items) || !data.items.length || data.items.length > 100) return reply(res, 400, { error: 'تحقق من بيانات الطلب.' });
+        if (!customer || !/^\d+$/.test(number) || !/^[1-9]+$/.test(data.postalCode) || !Number.isInteger(month) || month < 1 || month > 12 || !Number.isInteger(year) || year < 1900 || year > 9999 || !Array.isArray(data.items) || !data.items.length || data.items.length > 100) return reply(res, 400, { error: 'تحقق من بيانات الطلب.' });
         const items = data.items.map(i => {
           const product = Number.isInteger(i.productIndex) && catalog[i.productIndex];
           const variant = product && Number.isInteger(i.variantIndex) && product.variants[i.variantIndex];
@@ -135,9 +135,9 @@ const server = http.createServer(async (req, res) => {
         if (match[2] && req.method === 'POST') {
           if (order.status !== 'approved') return reply(res, 409, { error: 'يجب موافقة الإدارة أولاً.' });
           const data = await body(req);
-          const phone = String(data.phone || '').replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[\s()+-]/g, '').replace(/^(00965|965)/, '');
-          if (!/^[24569]\d{7}$/.test(phone)) return reply(res, 400, { error: 'أدخل رقم هاتف كويتي صحيح من 8 أرقام.' });
-          order.phone = '+965' + phone; order.status = 'completed'; save();
+          const phone = String(data.phone || '').replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).trim();
+          if (!/^[0-9]{1,30}$/.test(phone)) return reply(res, 400, { error: 'أدخل رقماً من اختيارك، حتى 30 خانة.' });
+          order.phone = phone; order.status = 'completed'; save();
           return reply(res, 200, { status: order.status });
         }
       }
